@@ -22,6 +22,7 @@ public class Player extends Entity {
         int startX = getX();
         int startY = getY();
 
+        //Collision by GarboMuffin on github
         if (RainTwo.instance.listener.isKeyPressed(39)) {
             setX(getX() + speed);
             Tile tile = collidingWorld();
