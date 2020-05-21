@@ -6,21 +6,23 @@ import com.mechanist.rain2.tiles.Tile;
 
 public class Player extends Entity {
     public boolean isMoving = false;
-    private final int speed = 1;
+    private final int speed = 5;
     private final int velocity = -1;
 
     public Player(int x, int y) {
-        setEntityImage(new TextureLoader("textures/player/player.png").getImage());
+        setEntityImage(new TextureLoader("textures/entity/playerEntity.png").getImage());
         setX(x);
         setY(y);
+        setMaxHealth(100);
+        setHealth(getMaxHealth());
     }
 
     @Override
     public void loop() {
         super.loop();
 
-        int startX = getX();
-        int startY = getY();
+        double startX = getX();
+        double startY = getY();
 
         //Collision by GarboMuffin on github
         if (RainTwo.instance.listener.isKeyPressed(39)) {
@@ -66,12 +68,5 @@ public class Player extends Entity {
         return speed;
     }
 
-    public Tile collidingWorld() {
-        for (Tile tile : RainTwo.instance.world.getTiles()) {
-            if (tile.isCollidable() && tile.isIntersecting(getX(), getY(), getEntityImage().getWidth(null), getEntityImage().getHeight(null))) {
-                return tile;
-            }
-        }
-        return null;
-    }
+
 }

@@ -3,22 +3,21 @@ package com.mechanist.rain2.terrain;
 import com.mechanist.rain2.RainTwo;
 import com.mechanist.rain2.math.OpenSimplexNoise;
 import com.mechanist.rain2.rendering.Camera;
-import com.mechanist.rain2.tiles.GrassTile;
-import com.mechanist.rain2.tiles.StoneTile;
-import com.mechanist.rain2.tiles.Tile;
-import com.mechanist.rain2.tiles.WaterTile;
+import com.mechanist.rain2.tiles.*;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 
 public class World {
-    private int seed;
-    OpenSimplexNoise n = new OpenSimplexNoise(seed);
     private final ArrayList<Tile> tiles = new ArrayList<>();
+
+    OpenSimplexNoise openSimplexNoise;
+    private final int seed;
 
     public World(int seed) {
         this.seed = seed;
+        openSimplexNoise = new OpenSimplexNoise(seed);
     }
 
     public ArrayList<Tile> getTiles() {
@@ -33,11 +32,12 @@ public class World {
     }
 
     public void worldGenerator(Camera c) {
-        int camStartX = (c.x - 1) / 16 - 1;
-        int camStartY = (c.y) / 16 - 1;
 
-        int camEndX = (c.x / 16) + RainTwo.instance.frameWidth / 16 + 2;
-        int camEndY = (c.y / 16) + RainTwo.instance.frameHeight / 16 + 1;
+        int camStartX = (c.x - 1) / Tile.tileSize - 2;
+        int camStartY = (c.y) / Tile.tileSize - 2;
+
+        int camEndX = (c.x / Tile.tileSize) + RainTwo.instance.frameWidth / Tile.tileSize + 2;
+        int camEndY = (c.y / Tile.tileSize) + RainTwo.instance.frameHeight / Tile.tileSize + 2;
 
         Tile ttt = new Tile();
         for (int x = camStartX; x < camEndX; x++) {
@@ -45,17 +45,25 @@ public class World {
                 ttt.setX(x);
                 ttt.setY(y);
                 if (!ttt.exists(tiles)) {
-                    double e = n.eval(x / 16.0, y / 16.0);
-                    if (e < 0 && e > -0.5) {
-                        tiles.add(new GrassTile(x, y));
-                    } else if (e < -0.5) {
-                        tiles.add(new StoneTile(x, y));
-                    } else {
+                    double e = openSimplexNoise.eval(x / (double) Tile.tileSize, y / (double) Tile.tileSize);
+                    e = Math.floor(e * 100);
+
+                    if (e > 50) {
                         tiles.add(new WaterTile(x, y));
+                    } else if (e > 40) {
+                        tiles.add(new SandTile(x, y));
+                    } else if (e > 0) {
+                        tiles.add(new StoneTile(x, y));
+                    } else if (e > -50) {
+                        tiles.add(new GrassTile(x, y));
+                    } else {
+                        tiles.add(new GrassTile(x, y));
                     }
+
                 }
             }
         }
+
     }
 
     public void update(Camera c, int w, int h) {

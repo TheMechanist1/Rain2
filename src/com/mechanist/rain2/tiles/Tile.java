@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Tile {
     private Image tileImage;
     private int x,y;
+    public final static int tileSize = 16;
 
     public Tile() {
         setTileImage(null);
@@ -54,16 +55,18 @@ public class Tile {
     }
 
     public boolean isOnScreen(Camera cam, int width, int height) {
-        int newX = x - cam.x;
-        int newY = y - cam.y;
+//        int newX = x - cam.x;
+//        int newY = y - cam.y;
+//
+//        return newX > -tileImage.getWidth(null) &&
+//                newX < width + tileImage.getWidth(null) &&
+//                newY > -tileImage.getHeight(null) &&
+//                newY < height + tileImage.getHeight(null);
 
-        return newX > -tileImage.getWidth(null) &&
-                newX < width + tileImage.getWidth(null) &&
-                newY > -tileImage.getHeight(null) &&
-                newY < height + tileImage.getHeight(null);
+        return isIntersecting(cam.x - tileSize, cam.y - tileSize, width + tileSize*2, height + tileSize*2);
     }
 
-    public boolean isIntersecting(int otherX, int otherY, int otherWidth, int otherHeight) {
+    public boolean isIntersecting(double otherX, double otherY, int otherWidth, int otherHeight) {
         return this.getX() < otherX + otherWidth &&
                 this.getX() + tileImage.getWidth(null) > otherX &&
                 this.getY() < otherY + otherHeight &&
