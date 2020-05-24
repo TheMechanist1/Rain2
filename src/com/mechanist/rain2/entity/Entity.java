@@ -1,6 +1,7 @@
 package com.mechanist.rain2.entity;
 
 import com.mechanist.rain2.RainTwo;
+import com.mechanist.rain2.rendering.Camera;
 import com.mechanist.rain2.tiles.Tile;
 
 import java.awt.*;
@@ -116,7 +117,20 @@ public class Entity {
         return null;
     }
 
+    public boolean isOnScreen(Camera cam, int width, int height) {
+        return isIntersecting(cam.x - entityImage.getWidth(null), cam.y - entityImage.getHeight(null), width + entityImage.getWidth(null) * 2, height + entityImage.getHeight(null) * 2);
+    }
 
+    public boolean isIntersecting(double otherX, double otherY, int otherWidth, int otherHeight) {
+        return this.getX() < otherX + otherWidth &&
+                this.getX() + entityImage.getWidth(null) > otherX &&
+                this.getY() < otherY + otherHeight &&
+                this.getY() + entityImage.getHeight(null) > otherY;
+    }
+
+    public boolean isIntersecting(Entity e) {
+        return this.isIntersecting(e.getX(), e.getY(), e.getEntityImage().getWidth(null), e.getEntityImage().getHeight(null));
+    }
 
     public void draw(Graphics g) {
         g.drawImage(this.entityImage, (int)this.getX(), (int)this.getY(), null);

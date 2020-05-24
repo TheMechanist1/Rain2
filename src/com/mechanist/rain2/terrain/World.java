@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class World {
     private final ArrayList<Tile> tiles = new ArrayList<>();
-
     OpenSimplexNoise openSimplexNoise;
     private final int seed;
 
@@ -54,10 +53,11 @@ public class World {
                         tiles.add(new SandTile(x, y));
                     } else if (e > 0) {
                         tiles.add(new StoneTile(x, y));
-                    } else if (e > -50) {
+                    } else if (e >= -80) {
                         tiles.add(new GrassTile(x, y));
                     } else {
                         tiles.add(new GrassTile(x, y));
+                        tiles.add(new CornTile(x, y));
                     }
 
                 }
@@ -67,6 +67,6 @@ public class World {
     }
 
     public void update(Camera c, int w, int h) {
-        tiles.removeIf(t -> !t.isOnScreen(c, w, h));
+        tiles.removeIf(tile -> !tile.isOnScreen(c, w, h));
     }
 }

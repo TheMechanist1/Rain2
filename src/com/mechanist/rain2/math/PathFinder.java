@@ -14,9 +14,11 @@ public class PathFinder {
         public Tile lastTile;
         public Result(Map<Tile, Tile> parents, Tile tile) {
             lastTile = tile;
+
             if (!parents.containsKey(tile)) {
                 r.add(tile);
             }
+
             while (parents.containsKey(tile)) {
                 r.add(tile);
                 tile = parents.get(tile);
@@ -31,7 +33,7 @@ public class PathFinder {
         Map<Tile, Tile> parents = new HashMap<>();
 
         openList.add(startTile);
-        costs.put(startTile, distance(startTile, endTile) + distance(startTile, startTile));
+        costs.put(startTile, Helper.distance(startTile, endTile) + Helper.distance(startTile, startTile));
 
         while (true) {
             Map.Entry<Tile, Double> min = null;
@@ -42,8 +44,11 @@ public class PathFinder {
             }
 
 
-            assert min != null;
-            Tile current = min.getKey();
+            Tile current = null;
+            if (min != null) {
+                current = min.getKey();
+            }
+
             openList.remove(current);
             closedList.add(current);
 
@@ -53,40 +58,27 @@ public class PathFinder {
 
             ArrayList<Tile> neighbors = new ArrayList<>();
             for (Tile tile : RainTwo.instance.world.getTiles()) {
-                // 000
-                //
-                //
-                if (tile.getX() == current.getX() - current.getTileImage().getWidth(null) && tile.getY() == current.getY() - current.getTileImage().getHeight(null)) {
-                    neighbors.add(tile);
-                }
+                //X0X
+                //XXX
+                //XXX
                 if (tile.getX() == current.getX() && tile.getY() == current.getY() - current.getTileImage().getHeight(null)) {
                     neighbors.add(tile);
                 }
-                if (tile.getX() == current.getX() + current.getTileImage().getWidth(null) && tile.getY() == current.getY() - current.getTileImage().getHeight(null)) {
-                    neighbors.add(tile);
-                }
-                //
+                //XXX
                 //0X0
-                //
+                //XXX
                 if (tile.getX() == current.getX() - current.getTileImage().getWidth(null) && tile.getY() == current.getY()) {
                     neighbors.add(tile);
                 }
                 if (tile.getX() == current.getX() + current.getTileImage().getWidth(null) && tile.getY() == current.getY()) {
                     neighbors.add(tile);
                 }
-                //
-                //
-                //000
-                if (tile.getX() == current.getX() - current.getTileImage().getWidth(null) && tile.getY() == current.getY() + current.getTileImage().getHeight(null)) {
-                    neighbors.add(tile);
-                }
+                //XXX
+                //XXX
+                //X0X
                 if (tile.getX() == current.getX() && tile.getY() == current.getY() + current.getTileImage().getHeight(null)) {
                     neighbors.add(tile);
                 }
-                if (tile.getX() == current.getX() + current.getTileImage().getWidth(null) && tile.getY() == current.getY() + current.getTileImage().getHeight(null)) {
-                    neighbors.add(tile);
-                }
-
             }
 
             for (Tile nTile : neighbors) {
@@ -94,26 +86,19 @@ public class PathFinder {
                     continue;
                 }
                 if (!openList.contains(nTile)) {
-                    costs.put(nTile, distance(nTile, endTile) + distance(nTile, startTile));
+                    costs.put(nTile, Helper.distance(nTile, endTile) + Helper.distance(nTile, startTile));
                     parents.put(nTile, current);
                     openList.add(nTile);
-                } else if (distance(nTile, endTile) + distance(nTile, startTile) < costs.get(nTile)) {
-                    costs.put(nTile, distance(nTile, endTile) + distance(nTile, startTile));
+                } else if (Helper.distance(nTile, endTile) + Helper.distance(nTile, startTile) < costs.get(nTile)) {
+                    costs.put(nTile, Helper.distance(nTile, endTile) + Helper.distance(nTile, startTile));
                     parents.put(nTile, current);
 
                 }
 
             }
         }
-
     }
 
-    private static double distance(Tile start, Tile end) {
-        if(start == null || end == null) {
-            return -1;
-        }
-        return Math.sqrt(Math.pow(end.getX() - start.getX(), 2) + Math.pow(end.getY() - start.getY(), 2));
-    }
 
 
 }

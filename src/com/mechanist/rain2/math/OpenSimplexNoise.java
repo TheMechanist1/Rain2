@@ -1,4 +1,5 @@
-package com.mechanist.rain2.math;/*
+package com.mechanist.rain2.math;
+/*
  * OpenSimplex Noise in Java.
  * by Kurt Spencer
  * URL: https://gist.github.com/KdotJPG/b1270127455a94ac5d19

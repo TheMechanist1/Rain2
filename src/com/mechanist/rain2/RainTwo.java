@@ -2,9 +2,9 @@ package com.mechanist.rain2;
 
 import com.mechanist.rain2.entity.Entity;
 import com.mechanist.rain2.entity.Player;
-import com.mechanist.rain2.entity.Spider;
 import com.mechanist.rain2.eventmanager.EventListener;
 import com.mechanist.rain2.rendering.Camera;
+import com.mechanist.rain2.rendering.UI.HotBar;
 import com.mechanist.rain2.terrain.World;
 import com.mechanist.rain2.tiles.GrassTile;
 import com.mechanist.rain2.tiles.Tile;
@@ -16,30 +16,34 @@ import java.util.ArrayList;
 
 public class RainTwo extends Canvas implements Runnable {
     public static RainTwo instance;
-    private Thread thread;
-    private boolean running;
+    public final HotBar playerHotBar = new HotBar();
+    public boolean running;
     public EventListener listener = new EventListener();
     public JFrame frame = new JFrame("Rain2");
-    
+
     public int frameWidth = 800, frameHeight = 800;
 
     public World world = new World(1);
     public int currentTick = 0;
     public Player player = new Player(0, 0);
+    public final Camera cam = new Camera(player);
     public ArrayList<Entity> entities = new ArrayList<>();
+    private Thread thread;
 
+    //Main
+    public static void main(String[] args) {
+        instance = new RainTwo();
+        instance.start();
+    }
 
     // start the thread
     public synchronized void start() {
         running = true;
         thread = new Thread(this, "Display");
         thread.start();
-        for(int i = 0; i<10; i++) {
-            entities.add(new Spider(0, 100));
 
-        }
         entities.add(player);
-
+//        entities.add(new Spider(10, 10));
 
 
     }
@@ -56,9 +60,6 @@ public class RainTwo extends Canvas implements Runnable {
 
     }
 
-    private final Camera cam = new Camera(0, 0, player);
-
-
     public void render() {
         BufferStrategy bs = getBufferStrategy();
         if (bs == null) {
@@ -68,23 +69,33 @@ public class RainTwo extends Canvas implements Runnable {
 
         Graphics g = bs.getDrawGraphics();
         g.clearRect(0, 0, frameWidth, frameHeight);
-        Tile t = new GrassTile(frameWidth/2,frameHeight/2);
+        Tile t = new GrassTile(frameWidth / 2, frameHeight / 2);
+
 
         g.translate(-cam.x, -cam.y);
         world.render(g, cam, frameWidth, frameHeight);
 
 
-
-        for(Entity e : entities) {
+        for (Entity e : entities) {
             e.draw(g);
         }
+        g.translate(cam.x, cam.y);
+        playerHotBar.render(g);
 
 
-
-
+        if (player.getHealth() <= 0) {
+            g.setFont(new Font("big", Font.BOLD, 30));
+            g.drawString("Game Over. Rerun game to restart", frameWidth / 2 - 200, frameHeight / 2);
+            player.setSpeed(0);
+        }
 
         g.dispose();
         bs.show();
+
+
+
+
+//        if(frame.getMousePosition() != null) listener.setMouseY(frame.getMousePosition().getLocation().y + cam.y);
 
 
     }
@@ -93,9 +104,15 @@ public class RainTwo extends Canvas implements Runnable {
         world.update(cam, frameWidth, frameHeight);
         cam.update();
 
-        for(Entity e : entities) {
+        if (frame.getMousePosition() != null) {
+            listener.setMouseX(frame.getMousePosition().getLocation().x + cam.x);
+            listener.setMouseY(frame.getMousePosition().getLocation().y + cam.y);
+        }
+
+        for (Entity e : entities) {
             e.loop();
         }
+
 
     }
 
@@ -110,8 +127,6 @@ public class RainTwo extends Canvas implements Runnable {
         frame.requestFocus();
 
         jFrameStuff();
-
-
 
 
         while (running) {
@@ -151,15 +166,7 @@ public class RainTwo extends Canvas implements Runnable {
         frame.pack();
         frameWidth = frame.getContentPane().getSize().width;
         frameHeight = frame.getContentPane().getSize().height;
-        player.setX(frameWidth/2);
-        player.setY(frameHeight/2);
 
 
-
-    }
-
-    public static void main(String[] args) {
-        instance = new RainTwo();
-        instance.start();
     }
 }
