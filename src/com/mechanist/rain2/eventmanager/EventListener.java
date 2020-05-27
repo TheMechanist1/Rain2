@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 public class EventListener implements KeyListener, MouseListener {
     public boolean[] keys = new boolean[128];
     public boolean[] mouseButtons = new boolean[10];
+    public boolean[] mouseButtons1 = new boolean[10];
     public int mouseX = 0;
     public int mouseY = 0;
 
@@ -28,7 +29,7 @@ public class EventListener implements KeyListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        mouseButtons1[e.getButton()] = !mouseButtons1[e.getButton()];
     }
 
     @Override
@@ -55,8 +56,12 @@ public class EventListener implements KeyListener, MouseListener {
         return keys[key];
     }
 
-    public boolean isMouseButtonPressed(int key) {
+    public boolean isMouseButtonHeld(int key) {
         return mouseButtons[key];
+    }
+
+    public boolean isMouseButtonClicked(int key) {
+        return mouseButtons1[key];
     }
 
     public int getMouseX() {

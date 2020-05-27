@@ -2,10 +2,13 @@ package com.mechanist.rain2;
 
 import com.mechanist.rain2.entity.Entity;
 import com.mechanist.rain2.entity.Player;
+import com.mechanist.rain2.entity.Spider;
 import com.mechanist.rain2.eventmanager.EventListener;
+import com.mechanist.rain2.math.Helper;
 import com.mechanist.rain2.rendering.Camera;
 import com.mechanist.rain2.rendering.UI.HotBar;
 import com.mechanist.rain2.terrain.World;
+import com.mechanist.rain2.tiles.Food;
 import com.mechanist.rain2.tiles.GrassTile;
 import com.mechanist.rain2.tiles.Tile;
 
@@ -13,6 +16,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RainTwo extends Canvas implements Runnable {
     public static RainTwo instance;
@@ -29,6 +34,8 @@ public class RainTwo extends Canvas implements Runnable {
     public final Camera cam = new Camera(player);
     public ArrayList<Entity> entities = new ArrayList<>();
     private Thread thread;
+    public Map<Helper.Vector2d, Tile> harvested = new HashMap<>();
+    public Map<Helper.Vector2d, Tile> oppositeOfHarvested = new HashMap<>();
 
     //Main
     public static void main(String[] args) {
@@ -43,7 +50,7 @@ public class RainTwo extends Canvas implements Runnable {
         thread.start();
 
         entities.add(player);
-//        entities.add(new Spider(10, 10));
+        entities.add(new Spider(10*16, 10*16));
 
 
     }
@@ -103,14 +110,22 @@ public class RainTwo extends Canvas implements Runnable {
     public void update() {
         world.update(cam, frameWidth, frameHeight);
         cam.update();
+        Point p = frame.getMousePosition();
 
-        if (frame.getMousePosition() != null) {
-            listener.setMouseX(frame.getMousePosition().getLocation().x + cam.x);
-            listener.setMouseY(frame.getMousePosition().getLocation().y + cam.y);
+        if (p != null) {
+            listener.setMouseX(p.getLocation().x + cam.x);
+            listener.setMouseY(p.getLocation().y + cam.y);
         }
 
         for (Entity e : entities) {
             e.loop();
+        }
+
+        entities.removeIf(entity -> entity.getHealth() <= 0);
+
+        for(Tile t : world.getTiles()) {
+            if(!(t instanceof Food)) continue;
+            ((Food) t).update();
         }
 
 
@@ -164,6 +179,7 @@ public class RainTwo extends Canvas implements Runnable {
         this.addMouseListener(listener);
         frame.setResizable(false);
         frame.pack();
+        frame.requestFocusInWindow();
         frameWidth = frame.getContentPane().getSize().width;
         frameHeight = frame.getContentPane().getSize().height;
 

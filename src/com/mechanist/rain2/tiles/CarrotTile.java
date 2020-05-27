@@ -4,9 +4,9 @@ import com.mechanist.rain2.rendering.TextureLoader;
 
 import java.awt.image.BufferedImage;
 
-public class CornTile extends Food {
-    public CornTile(int x, int y) {
-        setTileImage(new TextureLoader("textures/tile/cornTile.png").getImage());
+public class CarrotTile extends Food {
+    public CarrotTile(int x, int y) {
+        setTileImage(new TextureLoader("textures/tile/carrotTile.png").getImage());
         setX(x);
         setY(y);
         im = (BufferedImage) getTileImage();
@@ -19,6 +19,6 @@ public class CornTile extends Food {
 
     @Override
     public TileTypeEnum type() {
-        return TileTypeEnum.Corn;
+        return TileTypeEnum.Carrot;
     }
 }

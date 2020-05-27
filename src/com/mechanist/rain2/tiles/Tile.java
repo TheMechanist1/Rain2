@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class Tile {
     public final static int tileSize = 16;
-    public boolean color = false;
     private Image tileImage;
     private int x, y;
 

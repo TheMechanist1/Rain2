@@ -1,6 +1,7 @@
 package com.mechanist.rain2.terrain;
 
 import com.mechanist.rain2.RainTwo;
+import com.mechanist.rain2.math.Helper;
 import com.mechanist.rain2.math.OpenSimplexNoise;
 import com.mechanist.rain2.rendering.Camera;
 import com.mechanist.rain2.tiles.*;
@@ -11,8 +12,8 @@ import java.util.ArrayList;
 
 public class World {
     private final ArrayList<Tile> tiles = new ArrayList<>();
-    OpenSimplexNoise openSimplexNoise;
     private final int seed;
+    OpenSimplexNoise openSimplexNoise;
 
     public World(int seed) {
         this.seed = seed;
@@ -43,22 +44,41 @@ public class World {
             for (int y = camStartY; y < camEndY; y++) {
                 ttt.setX(x);
                 ttt.setY(y);
-                if (!ttt.exists(tiles)) {
-                    double e = openSimplexNoise.eval(x / (double) Tile.tileSize, y / (double) Tile.tileSize);
-                    e = Math.floor(e * 100);
 
+                RainTwo.instance.world.tiles.remove(RainTwo.instance.harvested.get(new Helper.Vector2d(x * 16, y * 16)));
+
+
+                if (!ttt.exists(tiles)) {
+
+                    if (RainTwo.instance.oppositeOfHarvested.containsKey(new Helper.Vector2d(x * 16, y * 16))) {
+                        if (RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x * 16, y * 16)) instanceof CornTile) {
+                            tiles.add(RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x*16, y*16)));
+                        }
+                        if (RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x * 16, y * 16)) instanceof BeanTile) {
+                            tiles.add(RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x*16, y*16)));
+                        }
+                        if (RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x * 16, y * 16)) instanceof CarrotTile) {
+                            tiles.add(RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x*16, y*16)));
+                        }
+                        if (RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x * 16, y * 16)) instanceof WheatTile) {
+                            tiles.add(RainTwo.instance.oppositeOfHarvested.get(new Helper.Vector2d(x*16, y*16)));
+                        }
+
+                        continue;
+                    }
+
+                    double e = openSimplexNoise.eval(x / 32.0, y / 32.0);
+                    e = Math.floor(e * 100);
                     if (e > 50) {
                         tiles.add(new WaterTile(x, y));
                     } else if (e > 40) {
                         tiles.add(new SandTile(x, y));
                     } else if (e > 0) {
                         tiles.add(new StoneTile(x, y));
-                    } else if (e >= -80) {
-                        tiles.add(new GrassTile(x, y));
                     } else {
                         tiles.add(new GrassTile(x, y));
-                        tiles.add(new CornTile(x, y));
                     }
+
 
                 }
             }

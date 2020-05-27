@@ -2,6 +2,8 @@ package com.mechanist.rain2.math;
 
 import com.mechanist.rain2.tiles.Tile;
 
+import java.util.Objects;
+
 public class Helper {
 
     public static double distance(int startX, int startY, int endX, int endY) {
@@ -12,10 +14,24 @@ public class Helper {
         return Math.sqrt(Math.pow(end.getX() - start.getX(), 2) + Math.pow(end.getY() - start.getY(), 2));
     }
 
-    public static class vector2d {
-        private int x, y;
+    public static class Vector2d {
+        private final int x, y;
 
-        public vector2d(int x, int y) {
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Vector2d vector2d = (Vector2d) o;
+            return x == vector2d.x &&
+                    y == vector2d.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+
+        public Vector2d(int x, int y) {
             this.x = x;
             this.y = y;
         }
@@ -24,17 +40,10 @@ public class Helper {
             return x;
         }
 
-        public void setX(int x) {
-            this.x = x;
-        }
-
         public int getY() {
             return y;
         }
 
-        public void setY(int y) {
-            this.y = y;
-        }
     }
 
 }
